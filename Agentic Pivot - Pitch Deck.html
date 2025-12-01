@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgenticPivot - Pitch Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* CORE SETUP */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0f172a;
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        /* SLIDE CONTAINER */
+        .slide-container {
+            background-color: #0f172a;
+            border-radius: 16px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            display: none; /* Hidden by default, toggled by JS */
+            flex-direction: column;
+            height: 720px;
+            width: 1280px;
+            justify-content: center;
+            overflow: hidden;
+            padding: 60px;
+            position: relative;
+            color: #f8fafc;
+            transform-origin: center center;
+        }
+
+        /* Active slide is visible */
+        .slide-container.active {
+            display: flex;
+            animation: fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* BACKGROUND ELEMENTS & ANIMATION */
+        .slide-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            object-fit: cover;
+            opacity: 0.25; 
+            filter: grayscale(30%) contrast(1.1);
+            animation: slowZoom 30s infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .slide-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.75) 100%);
+            z-index: 1;
+        }
+
+        .slide-container > .content-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* LOGO ON EVERY SLIDE */
+        .slide-logo {
+            position: absolute;
+            top: 40px;
+            right: 50px;
+            z-index: 10;
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .slide-logo i {
+            color: #38bdf8;
+            transform: rotate(180deg); /* Upside down logo */
+        }
+
+        /* TYPOGRAPHY */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3 {
+            font-family: 'Oswald', sans-serif;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .slide-container h1 {
+            font-size: 90px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            line-height: 1.1;
+        }
+
+        .slide-container .slide-title {
+            font-size: 52px;
+            color: #f8fafc;
+            margin-bottom: 40px;
+            border-left: 6px solid #38bdf8;
+            padding-left: 25px;
+            width: 100%;
+            text-align: left;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .slide-container h3 {
+            font-size: 28px;
+            color: #38bdf8;
+            margin-bottom: 15px;
+        }
+
+        .slide-container p,
+        .slide-container li {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+        
+        .slide-container .content-area {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* NAVIGATION CONTROLS */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 9999;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #38bdf8;
+            color: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .slide-counter {
+            color: #94a3b8;
+            align-self: center;
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        /* LAYOUTS */
+        
+        /* Title Slide */
+        .title-layout {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
+
+        .title-layout .subtitle {
+            font-size: 28px;
+            color: #94a3b8;
+            margin-top: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .title-layout .team-name {
+            margin-top: 60px;
+            font-size: 18px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        /* Two Column */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .two-column > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .image-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            height: 400px;
+            width: 100%;
+            background: #1e293b;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Quote Layout */
+        .quote-layout {
+            text-align: center;
+            max-width: 1000px;
+            background: rgba(30, 41, 59, 0.4);
+            padding: 60px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            margin: 0 auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .quote-layout blockquote {
+            font-size: 42px;
+            font-weight: 600;
+            color: #e2e8f0;
+            line-height: 1.4;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .quote-layout .highlight {
+             color: #38bdf8;
+        }
+
+        .quote-layout cite {
+            display: block;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #94a3b8;
+            font-style: normal;
+        }
+
+        /* Tiled Layout */
+        .tiled-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .tile {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 30px 25px;
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+        }
+        
+        .tile:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.5);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .tile .icon {
+            font-size: 48px;
+            color: #38bdf8;
+            margin-bottom: 25px;
+        }
+
+        .tile h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .tile p {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        /* Lists */
+        ul.styled-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        ul.styled-list li {
+            margin-bottom: 20px;
+            padding-left: 35px;
+            position: relative;
+            font-size: 22px;
+        }
+        
+        ul.styled-list li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 4px;
+            color: #38bdf8;
+        }
+
+        /* Bleed Image Layout - FIXED FOR SLIDE 5 */
+        .slide-container.bleed-image-layout {
+            display: none;
+            grid-template-columns: 1.2fr 0.8fr; /* Give text column slightly more space */
+            padding: 0;
+            align-items: stretch;
+        }
+
+        .slide-container.bleed-image-layout.active {
+            display: grid;
+        }
+
+        .slide-container.bleed-image-layout > .content-container {
+            padding: 60px; /* Adjusted padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            z-index: 2;
+            overflow: hidden; /* Prevent overflow */
+        }
+        
+        /* Specific fix for Slide 5 typography */
+        .slide-container.bleed-image-layout h2.slide-title {
+            margin-bottom: 20px;
+            font-size: 48px; /* Slightly smaller title */
+        }
+
+        .slide-container.bleed-image-layout h3 {
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .slide-container.bleed-image-layout p {
+            margin-bottom: 15px;
+            font-size: 18px; /* Adjusted font size */
+        }
+
+        .slide-container.bleed-image-layout ul.styled-list {
+            margin-top: 20px !important;
+        }
+
+        .slide-container.bleed-image-layout ul.styled-list li {
+            margin-bottom: 15px;
+            font-size: 18px; /* Adjusted list font size */
+            line-height: 1.4;
+        }
+
+        .slide-container.bleed-image-layout > .image-container {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .slide-container.bleed-image-layout img.bleed-image-side {
+            width: 100%;
+            height: 100%;
+            max-height: 720px;
+            object-fit: cover;
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        
+        /* Timeline */
+        .timeline-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            width: 90%;
+            margin-top: 40px;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #334155;
+            z-index: 0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            background: #0f172a;
+            padding: 0 15px;
+        }
+        
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: #38bdf8;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+        }
+        
+        .timeline-date {
+            color: #38bdf8;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .team-member {
+            display: flex;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .member-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid #38bdf8;
+            background-color: #1e293b;
+            flex-shrink: 0;
+        }
+
+        .member-info h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #f8fafc;
+        }
+
+        .member-info p {
+            font-size: 14px;
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        .profile-btn {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #38bdf8;
+            text-decoration: none;
+            border: 1px solid #38bdf8;
+            padding: 4px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .profile-btn:hover {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        /* Q&A */
+        .qa-layout {
+            text-align: center;
+            margin: 0 auto;
+        }
+        
+        .qa-layout h2 {
+            font-size: 100px;
+            color: #38bdf8;
+            margin-bottom: 20px;
+        }
+        
+        .contact-box {
+            margin-top: 50px;
+            padding: 20px 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            display: inline-block;
+            background: rgba(30,41,59,0.5);
+        }
+        
+        /* Responsive scaling */
+        @media (max-width: 1300px) {
+            .slide-container {
+                transform: scale(0.8);
+            }
+        }
+         @media (max-width: 1000px) {
+            .slide-container {
+                transform: scale(0.6);
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background-color: #0f172a;
+                display: block;
+                height: auto;
+                overflow: visible;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .slide-container {
+                display: flex !important;
+                transform: none !important;
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                height: 100vh;
+                page-break-after: always;
+                border: none;
+            }
+            .controls {
+                display: none;
+            }
+            .slide-logo {
+                top: 20px;
+                right: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="slide-container active" id="slide1">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1920&q=80" alt="Technology Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+        
+        <div class="content-wrapper">
+            <div class="title-layout">
+                <h1>AgenticPivot</h1>
+                <p class="subtitle">Pivoting Business with Agentic Intelligence</p>
+                <div class="team-name" style="margin-top: 30px;">ABN: 79789372887</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide2">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1920&q=80" alt="Connection Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <h2 class="slide-title">Our Vision</h2>
+            <div class="content-area">
+                <div class="quote-layout">
+                    <blockquote>
+                        "We empower organizations to <span class="highlight">transform existing workflows</span> and <span class="highlight">pivot</span> toward advanced autonomy. By analyzing legacy systems and recommending intelligent agentic layers, we turn static businesses into <span class="highlight">self-reasoning ecosystems</span>."
+                    </blockquote>
+                    <cite>— From Static Workflows to Agentic Evolution</cite>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide3">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1616588589676-60b30c3c6a75?auto=format&fit=crop&w=1920&q=80" alt="Stress Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <h2 class="slide-title">The Operational Pivot</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <h3>Transforming Core Operations</h3>
+                        <ul class="styled-list">
+                            <li><strong>Automate Processes:</strong> Transform business workflows by automating manual data collection and complex analysis.</li>
+                            <li><strong>Decisive Action:</strong> Empower systems to move beyond passive reporting and independently interpret and take action on data.</li>
+                            <li><strong>Rapid Recommendations:</strong> Deliver immediate, customized recommendations to customers via intelligent agentic workflows.</li>
+                        </ul>
+                    </div>
+                    <div class="image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1516387938699-a93567ec168e?auto=format&fit=crop&w=800&q=80" alt="User interacting with advanced automation">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide4">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1920&q=80" alt="Digital Noise Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <h2 class="slide-title">The Agentic Workflow</h2>
+            <div class="content-area">
+                <div class="two-column">
+                     <div class="image-wrapper" style="height: 450px;">
+                        <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=800&q=80" alt="Connected Data Flow">
+                    </div>
+                    <div>
+                        <div style="margin-bottom: 30px;">
+                            <h3>A Unified Ecosystem</h3>
+                            <p>A self-correcting loop that transforms data into customer value.</p>
+                        </div>
+                        
+                        <div class="tile" style="text-align: left; display: block; padding: 15px;">
+                            <div style="display: flex; align-items: center;">
+                                <i class="fa-solid fa-database" style="color: #38bdf8; font-size: 24px; margin-right: 15px;"></i>
+                                <h3 style="font-size: 20px; margin: 0; color: #f8fafc;">1. Unified Data Collection</h3>
+                            </div>
+                            <p style="font-size: 16px; margin-top: 5px; margin-left: 40px;">Automate the gathering of voice, text, and visual data from legacy silos.</p>
+                        </div>
+
+                        <div class="tile" style="text-align: left; display: block; margin-top: 15px; padding: 15px;">
+                            <div style="display: flex; align-items: center;">
+                                <i class="fa-solid fa-gears" style="color: #38bdf8; font-size: 24px; margin-right: 15px;"></i>
+                                <h3 style="font-size: 20px; margin: 0; color: #f8fafc;">2. Autonomous Action</h3>
+                            </div>
+                            <p style="font-size: 16px; margin-top: 5px; margin-left: 40px;">Analyze real-time inputs to trigger complex operational tasks without human friction.</p>
+                        </div>
+
+                        <div class="tile" style="text-align: left; display: block; margin-top: 15px; padding: 15px;">
+                            <div style="display: flex; align-items: center;">
+                                <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 24px; margin-right: 15px;"></i>
+                                <h3 style="font-size: 20px; margin: 0; color: #f8fafc;">3. Rapid Recommendation</h3>
+                            </div>
+                            <p style="font-size: 16px; margin-top: 5px; margin-left: 40px;">Deliver immediate, personalized outcomes to customers through intelligent agents.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container bleed-image-layout" id="slide5">
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+        <div class="content-container">
+            <h2 class="slide-title">Core Capabilities</h2>
+            <h3>We Build Digital Employees</h3>
+            <p>From handling complex negotiations to scheduling and logistics, our agents act as intelligent extensions of your team.</p>
+            <ul class="styled-list" style="margin-top: 30px;">
+                <li><strong>SLM & LLM Development:</strong> Secure, domain-specific models.</li>
+                <li><strong>Voice Integration:</strong> Interfaces that understand tone & nuance.</li>
+                <li><strong>Synthetic Data:</strong> High-fidelity datasets for robust training.</li>
+                <li><strong>Computer Vision:</strong> Visual analysis for diagnostics & security.</li>
+            </ul>
+        </div>
+        <div class="image-container">
+            <img class="bleed-image-side" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80" alt="AI Neural Network and Data Nodes">
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide6">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=80" alt="Data Chart Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <h2 class="slide-title">Market Opportunities</h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <h3>Business Process</h3>
+                        <p>Automating complex workflows in Finance, Logistics, and HR that require reasoning, not just scripting.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="icon"><i class="fa-solid fa-headset"></i></div>
+                        <h3>Next-Gen Support</h3>
+                        <p>Voice-integrated agents that handle support tickets with empathy and contextual awareness.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Secure Intelligence</h3>
+                        <p>Private, on-premise Small Language Models (SLMs) for data-sensitive industries.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide7">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80" alt="Team Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <h2 class="slide-title">The Experts</h2>
+            <div class="content-area">
+                <div class="team-grid">
+                    <div class="team-member">
+                        <img 
+                            src="https://federation.edu.au/__data/assets/image/0003/628752/giles-aus2023.jpg" 
+                            onerror="this.src='https://ui-avatars.com/api/?name=Giles+Oatley&background=38bdf8&color=0f172a&size=128&bold=true'"
+                            class="member-img" 
+                            alt="Dr. Giles Oatley">
+                        <div class="member-info">
+                            <h3>Dr. Giles Oatley</h3>
+                            <p>Cognitive Design Lead</p>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <img 
+                            src="https://federation.edu.au/__data/assets/image/0015/602043/Tanveer-Choudhury.jpg" 
+                            onerror="this.src='https://ui-avatars.com/api/?name=Tanveer+Choudhury&background=38bdf8&color=0f172a&size=128&bold=true'"
+                            class="member-img" 
+                            alt="Dr. Tanveer Choudhury">
+                        <div class="member-info">
+                            <h3>Dr. Tanveer Choudhury</h3>
+                            <p>AI Lead</p>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <img 
+                            src="https://federation.edu.au/__data/assets/image/0011/284195/Sisira_Colombage_Resized.jpg" 
+                            onerror="this.src='https://ui-avatars.com/api/?name=Sisira+Colombage&background=38bdf8&color=0f172a&size=128&bold=true'"
+                            class="member-img" 
+                            alt="Dr. Sisira Colombage">
+                        <div class="member-info">
+                            <h3>Dr. Sisira Colombage</h3>
+                            <p>Business & Finance Lead</p>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <img 
+                            src="https://media.licdn.com/dms/image/v2/C4D03AQEzRmpoUy2SOA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1634415081021?e=1765411200&v=beta&t=TzsfSJtF1P26bKwnyV-gvgUz6PB9J5bfoAObWbeX0-A" 
+                            onerror="this.src='https://ui-avatars.com/api/?name=Zakir+Ullah+Shah&background=38bdf8&color=0f172a&size=128&bold=true'"
+                            class="member-img" 
+                            alt="Zakir Ullah Shah">
+                        <div class="member-info">
+                            <h3>Zakir Ullah Shah</h3>
+                            <p>Agentic Automation Engineer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide8">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=1920&q=80" alt="Rocket Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <h2 class="slide-title">Roadmap</h2>
+            <div class="content-area">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <p>Building the Future of Work</p>
+                </div>
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Phase 1</div>
+                        <p style="font-size: 16px;">Concept &<br>Team Formation</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Phase 2</div>
+                        <p style="font-size: 16px;">Pre-Accelerator<br>(Market Fit)</p>
+                    </div>
+                     <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #64748b;"></div>
+                        <div class="timeline-date" style="color: #64748b;">Phase 3</div>
+                        <p style="font-size: 16px; color: #64748b;">Prototype<br>Development</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background: #64748b;"></div>
+                        <div class="timeline-date" style="color: #64748b;">Phase 4</div>
+                        <p style="font-size: 16px; color: #64748b;">Pilot<br>Launch</p>
+                    </div>
+                </div>
+                 <div class="image-wrapper" style="height: 200px; margin-top: 50px; border: none; box-shadow: none; background: transparent;">
+                     <i class="fa-solid fa-rocket" style="font-size: 150px; color: #38bdf8; filter: drop-shadow(0 0 20px rgba(56,189,248,0.5));"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide9">
+        <img class="slide-bg" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80" alt="World Background">
+        <div class="slide-gradient"></div>
+        <div class="slide-logo"><i class="fa-solid fa-network-wired"></i> AgenticPivot</div>
+
+        <div class="content-wrapper">
+            <div class="content-area">
+                <div class="qa-layout">
+                    <h2>Ready to Pivot?</h2>
+                    <p>Transform your business with intelligent agents today.</p>
+                    <div class="contact-box">
+                        <i class="fa-solid fa-envelope" style="margin-right: 10px;"></i> sisira.colombage@federation.edu.au
+                    </div>
+                    <div style="margin-top: 20px; color: #64748b; font-size: 14px;">ABN: 79789372887</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="nav-btn" onclick="changeSlide(-1)">Previous</button>
+        <div class="slide-counter" id="counter">1 / 9</div>
+        <button class="nav-btn" onclick="changeSlide(1)">Next</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-container');
+        const counter = document.getElementById('counter');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            if (counter) {
+                counter.innerText = `${index + 1} / ${slides.length}`;
+            }
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            }
+        });
+
+        // Initialize immediately
+        showSlide(currentSlide);
+        
+        // Ensure initialization on load
+        window.onload = function() {
+             showSlide(currentSlide);
+        };
+    </script>
+</body>
+</html>
